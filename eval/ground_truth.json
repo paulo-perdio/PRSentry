@@ -1,0 +1,71 @@
+{
+  "_comment": "Ground truth for eval scoring. pr_number is filled in AFTER you create each PR on GitHub — branch names are fixed, PR numbers are assigned by GitHub and unknown until then. This file deliberately lives in PRSentry, not in test-repo, so it can never leak into a diff the way GROUND_TRUTH.md did.",
+  "entries": [
+    {
+      "branch": "feature/clean-addition",
+      "pr_number": null,
+      "expected_has_bug": false,
+      "description": "filter_in_stock helper — correct, no bugs"
+    },
+    {
+      "branch": "feature/buggy-changes",
+      "pr_number": null,
+      "expected_has_bug": true,
+      "description": "Removed validation in apply_discount + off-by-one in find_item_index"
+    },
+    {
+      "branch": "feature/mutable-default-bug",
+      "pr_number": null,
+      "expected_has_bug": true,
+      "description": "tag_item uses a mutable default argument (seen_tags=[]) — state leaks across calls"
+    },
+    {
+      "branch": "feature/bare-except-bug",
+      "pr_number": null,
+      "expected_has_bug": true,
+      "description": "safe_average_price has a bare except that swallows all errors, including real bugs"
+    },
+    {
+      "branch": "feature/identity-comparison-bug",
+      "pr_number": null,
+      "expected_has_bug": true,
+      "description": "is_free uses 'is' instead of '==' to compare floats — always returns False"
+    },
+    {
+      "branch": "feature/keyerror-regression-bug",
+      "pr_number": null,
+      "expected_has_bug": true,
+      "description": "calculate_total_price accesses item['discount'] without a default — KeyError on items lacking that key"
+    },
+    {
+      "branch": "feature/clean-type-hints",
+      "pr_number": null,
+      "expected_has_bug": false,
+      "description": "Adds type hints to find_item — no behavior change"
+    },
+    {
+      "branch": "feature/clean-sort-helper",
+      "pr_number": null,
+      "expected_has_bug": false,
+      "description": "sort_by_price — correct, defensive against missing 'price' key"
+    },
+    {
+      "branch": "feature/multi-file-tax-bug",
+      "pr_number": null,
+      "expected_has_bug": true,
+      "description": "HARDER — cross-file bug. pricing.py calls apply_discount(subtotal, discount_fraction) passing a 0-1 fraction where apply_discount (defined in inventory.py, NOT part of this diff) expects a 0-100 percent. Silently applies ~0.2% discount instead of 20%. Genuinely tests whether the review process has any visibility into called functions outside the diff itself — if PRSentry misses this, that's an architectural limitation (diff-only context) worth documenting, not just a model failure."
+    },
+    {
+      "branch": "feature/idiomatic-none-check",
+      "pr_number": null,
+      "expected_has_bug": false,
+      "description": "TRAP — get_effective_price uses 'is not None', which is correct, idiomatic Python for a singleton check. Superficially resembles the earlier is_free bug (which misused 'is' for value/float comparison) but is NOT the same thing. Tests false-positive resistance: does the review understand WHY the earlier 'is' usage was wrong, or does it just pattern-match on the token 'is'?"
+    },
+    {
+      "branch": "feature/rounding-accumulation-bug",
+      "pr_number": null,
+      "expected_has_bug": true,
+      "description": "HARDER — calculate_receipt_total rounds each line item to 2 decimals before summing, instead of summing exact values and rounding once. Causes small cumulative discrepancies across many items — a real, subtle financial-calculation bug category, not a named/famous idiom like off-by-one or mutable-default. No exception, no obviously 'wrong-looking' line."
+    }
+  ]
+}
